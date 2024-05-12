@@ -7,7 +7,6 @@ expressApp.use(express.json());
 expressApp.get("*", (req, res) => {
     console.log(req.body);
 
-    console.log(urlToken);
     res.end('hi botu!')
 });
 expressApp.post("*", async (req, res) => {
@@ -18,5 +17,6 @@ expressApp.post("*", async (req, res) => {
 
 expressApp.listen(80, 'localhost', () => {
     console.log('server started;');
+    
 })
 

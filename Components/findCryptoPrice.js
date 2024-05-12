@@ -1,7 +1,13 @@
-const { cryptoFunc } = require("./axios");
+const { cryptoFunc, updateCryptoCurrencyCoinList } = require("./axios");
 const { sendMessage } = require("../api/messageAPI");
-const cryptoCurrencyCoinList = require('../DB/cryptoCurrencyCoinList.json');
-// const navigator = require('browser-env')
+const fs = require('fs');
+
+try {
+    const cryptoCurrencyCoinList = require('../DB/cryptoCurrencyCoinList.json');
+} catch (error) {
+    fs.appendFile('./DB/errorlog.txt',Buffer.from(JSON.stringify(error, null, 2)));
+    updateCryptoCurrencyCoinList();
+}
 
 
 async function findCryptoPrice(ctx, userName) {
@@ -36,7 +42,6 @@ async function findCryptoPrice(ctx, userName) {
                         res(sendMessage(ctx.message.chat.id, `\u{1F600} i'm expecting more messages from you`))
                     }else {
                         try {
-
                             let getSuggCoinsList = [], message = `\*Your text is not matched with coin ids, but it's matched with below results, kindly use ids to search price\* \n\n`,delimeter = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'], elementID ,elementName, elementSym ;
                             for (const key in cryptoCurrencyCoinList) {
                                 // console.log(cryptoCurrencyCoinList[key]);

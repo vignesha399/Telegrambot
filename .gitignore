@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 .env
+outFile.js
+userFile.json
+.gitignore
 
 # testing
 /coverage

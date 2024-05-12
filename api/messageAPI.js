@@ -9,7 +9,7 @@ const mime = require('mime');
 const path = require('path');
 const fs = require('fs');
 const { errors } = require("node-telegram-bot-api/src/telegram");
-const { BASE_URL } = require("..");
+const { BASE_URL } = require("../Components/axios");
 const deprecate = require('node-telegram-bot-api/src/utils').deprecate;
 const debug = require('debug')('node-telegram-bot-api');
 
@@ -21,49 +21,28 @@ function _formatSendData(type, data, fileOptions = {}) {
     let filedata = data;
     let filename = fileOptions.filename;
     let contentType = fileOptions.contentType;
-
-    if (data instanceof stream.Stream) {
-      if (!filename && data.path) {
-        // Will be 'null' if could not be parsed.
-        // For example, 'data.path' === '/?id=123' from 'request("https://example.com/?id=123")'
-        const url = URL.parse(path.basename(data.path.toString()));
-        if (url.pathname) {
-          filename = qs.unescape(url.pathname);
-          console.log(filename,"from nodeTelebot354");
-        }
-      }
-    } else if (Buffer.isBuffer(data)) {
-      if (!filename && !process.env.NTBA_FIX_350) {
+    //  if (Buffer.isBuffer(data)) {
+      if (!filename) {
         deprecate(`Buffers will have their filenames default to "filename" instead of "data". ${deprecationMessage}`);
-        filename = 'data';
+        filename = new Date().getFullYear()+"_"+new Date().getMonth()+"_"+new Date().getDate()+"_"+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+new Date().getMilliseconds();
+        console.log('dont have filename');
       }
-      if (!contentType) {
+      // if (contentType) {
         const filetype = fileType(data);
         if (filetype) {
           contentType = filetype.mime;
           const ext = filetype.ext;
           if (ext && !process.env.NTBA_FIX_350) {
             filename = `${filename}.${ext}`;
+            console.log('fileName : ',filename, filedata,filetype);
           }
         } else if (!process.env.NTBA_FIX_350) {
           deprecate(`An error will no longer be thrown if file-type of buffer could not be detected. ${deprecationMessage}`);
           throw new errors.FatalError('Unsupported Buffer file-type');
         }
-      }
-    } else if (data) {
-      if (this.options.filepath && fs.existsSync(data)) {
-        filedata = fs.createReadStream(data);
-        if (!filename) {
-          filename = path.basename(data);
-        }
-      } else {
-        return [null, data];
-      }
-    } else {
-      return [null, data];
-    }
-
-    filename = filename || 'filename';
+      // }
+    // } 
+    filename = filename;
     contentType = contentType || mime.lookup(filename);
     if (process.env.NTBA_FIX_350) {
       contentType = contentType || 'application/octet-stream';
@@ -101,41 +80,118 @@ async function deleteMessage(id, msdID, MarkdownV2) {
         message_ids: [msdID]
     }))
 }
-async function sendDocument(id, options){
-    sendMessage(options.qs.chat_id,options.formData.photo);
-    console.log(options, options.formData.photo.options, options.formData.photo.value)
-    options.method = 'POST';
-    options.simple = false;
-    options.url = BASE_URL;
-    options.uri = 'https://api.telegram.org/bot'+options.method
-    options.resolveWithFullResponse = true;
-    options.forever = true;
-    debug('HTTP request: %j', options);
-    return request(options)
-      .then(resp => {
-        let data;
-        try {
-          data = resp.body = JSON.parse(resp.body);
-        //   console.log((data.photo+ 'data place'));
-        for (const key in data) {
-            if (Object.hasOwnProperty.call(data, key)) {
-                const element = data[key];
-                console.log(element);
-                
-            }
-        }
-        } catch (err) {
-          throw new errors.ParseError(`Error parsing response: ${resp.body}`, resp);
-        }
 
-        if (data.ok) {
-          return data.result;
-        }
-      }).catch(error => {
-        // TODO: why can't we do `error instanceof errors.BaseError`?
-        if (error.response) throw error;
-        throw new errors.FatalError(error);
-      });
-    // (postDocument('sendPhoto', JSON.parse(options.formData.photo)))
+function fixReplyMarkup(obj) {
+  const replyMarkup = obj.reply_markup;
+  if (replyMarkup && typeof replyMarkup !== 'string') {
+    obj.reply_markup = stringify(replyMarkup);
+  }
 }
-module.exports = {sendMessage, sendDocument, _formatSendData, deleteMessage}
+
+/**
+ * Fix 'entities' or 'caption_entities' or 'explanation_entities' parameter by making it JSON-serialized, as
+ * required by the Telegram Bot API
+ * @param {Object} obj Object;
+ * @private
+ * @see https://core.telegram.org/bots/api#sendmessage
+ * @see https://core.telegram.org/bots/api#copymessage
+ * @see https://core.telegram.org/bots/api#sendpoll
+ */
+function _fixEntitiesField(obj) {
+  const entities = obj.entities;
+  const captionEntities = obj.caption_entities;
+  const explanationEntities = obj.explanation_entities;
+  if (entities && typeof entities !== 'string') {
+    obj.entities = stringify(entities);
+  }
+
+  if (captionEntities && typeof captionEntities !== 'string') {
+    obj.caption_entities = stringify(captionEntities);
+  }
+
+  if (explanationEntities && typeof explanationEntities !== 'string') {
+    obj.explanation_entities = stringify(explanationEntities);
+  }
+}
+
+
+/**
+ * Fix 'reply_parameters' parameter by making it JSON-serialized, as
+ * required by the Telegram Bot API
+ * @param {Object} obj Object; either 'form' or 'qs'
+ * @private
+ * @see https://core.telegram.org/bots/api#sendmessage
+ */
+function  _fixReplyParameters(obj) {
+  if (obj.hasOwnProperty('reply_parameters') && typeof obj.reply_parameters !== 'string') {
+    obj.reply_parameters = stringify(obj.reply_parameters);
+  }
+}
+
+
+function _request(_path, options = {}) {
+
+  if (options.form) {
+    fixReplyMarkup(options.form);
+    _fixEntitiesField(options.form);
+    _fixReplyParameters(options.form);
+  }
+  if (options.qs) {
+    fixReplyMarkup(options.qs);
+    _fixReplyParameters(options.qs);
+  }
+
+  options.method = 'POST';
+  options.url = BASE_URL+_path;
+  options.simple = false;
+  options.resolveWithFullResponse = true;
+  options.forever = true;
+  debug('HTTP request: %j', options);
+  return request(options)
+    .then(resp => {
+      let data;
+      try {
+        data = resp.body = JSON.parse(resp.body);
+      } catch (err) {
+        throw new errors.ParseError(`Error parsing response: ${resp.body}`, resp);
+      }
+
+      if (data.ok) {
+        return data.result;
+      }
+      throw new errors.TelegramError(`${data.error_code} ${data.description}`, resp);
+    }).catch(error => {
+      // TODO: why can't we do `error instanceof errors.BaseError`?
+      if (error.response) throw error;
+      throw new errors.FatalError(error);
+    });
+}
+function sendPhoto(chatId, photo, options = {}, fileOptions = {}) {
+  const opts = {
+      qs: options,
+  };
+  opts.qs.chat_id = chatId;
+  try {
+      const sendData = _formatSendData('photo', photo, fileOptions);
+      opts.formData = sendData[0];
+      opts.qs.photo = sendData[1];
+  } catch (ex) {
+      return Promise.reject(ex);
+  }
+  return _request('sendPhoto', opts);
+}
+function sendDocument(chatId, photo, options = {}, fileOptions = {}) {
+  const opts = {
+      qs: options,
+  };
+  opts.qs.chat_id = chatId;
+  try {
+      const sendData = _formatSendData('document', photo, fileOptions);
+      opts.formData = sendData[0];
+      opts.qs.document = sendData[1];
+  } catch (ex) {
+      return Promise.reject(ex);
+  }
+  return _request('sendDocument', opts);
+}
+module.exports = {sendMessage, _formatSendData, deleteMessage, _request, sendDocument, sendPhoto}
