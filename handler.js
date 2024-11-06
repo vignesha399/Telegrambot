@@ -4,7 +4,7 @@ const { findCryptoPrice } = require('./Components/findCryptoPrice');
 const { findWeatherReport } = require('./Components/weather');
 const { sendMessage, deleteMessage } = require('./api/messageAPI');
 const { renamePhoto, renameDoument } = require('./Components/renameFiles');
-const outFile = require('./outFile');
+// const outFile = require('./outFile');
 const fs = require('fs');
 var { ncrypt } = require("ncrypt-js");
 
@@ -23,7 +23,7 @@ function findUserName(first_name, last_name) {
 
 
 async function handler(req) {
-    outFile(req);
+    // outFile(req);
     if (req.message?.text || req.edited_message?.text) {
         findUserName(req.message.from.first_name, req.message.from.last_name);
         let commandText = req.message.text.toString().split(' ');
