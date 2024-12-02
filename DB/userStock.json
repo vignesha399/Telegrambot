@@ -1,0 +1,113 @@
+[
+  {
+    "chatID": 7356150219,
+    "fromID": 7356150219,
+    "firstName": "Vignesh",
+    "lastName": "A",
+    "stock": [
+      {
+        "stockName": "Ease my trip",
+        "symbol": "EASEMYTRIP.NS",
+        "exchange": "NSI",
+        "exchDisp": "NSE"
+      },
+      {
+        "stockName": "Ease my trip",
+        "symbol": "EASEMYTRIP.BO",
+        "exchange": "BSE",
+        "exchDisp": "Bombay"
+      }
+    ],
+    "freequency": {
+      "5m": [
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.NS",
+          "exchange": "NSI",
+          "exchDisp": "NSE"
+        },
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.BO",
+          "exchange": "BSE",
+          "exchDisp": "Bombay"
+        }
+      ],
+      "15m": [
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.NS",
+          "exchange": "NSI",
+          "exchDisp": "NSE"
+        },
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.BO",
+          "exchange": "BSE",
+          "exchDisp": "Bombay"
+        }
+      ],
+      "30m": [
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.NS",
+          "exchange": "NSI",
+          "exchDisp": "NSE"
+        },
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.BO",
+          "exchange": "BSE",
+          "exchDisp": "Bombay"
+        }
+      ],
+      "45m": [
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.NS",
+          "exchange": "NSI",
+          "exchDisp": "NSE"
+        },
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.BO",
+          "exchange": "BSE",
+          "exchDisp": "Bombay"
+        }
+      ],
+      "60m": [
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.NS",
+          "exchange": "NSI",
+          "exchDisp": "NSE"
+        },
+        {
+          "stockName": "Ease my trip",
+          "symbol": "EASEMYTRIP.BO",
+          "exchange": "BSE",
+          "exchDisp": "Bombay"
+        }
+      ]
+    },
+    "targetValue": [
+      {
+        "value": 0,
+        "stockName": "Ease my trip",
+        "symbol": "EASEMYTRIP.NS",
+        "exchange": "NSI",
+        "exchDisp": "NSE",
+        "exchangeName": "NSE"
+      },
+      {
+        "value": 0,
+        "stockName": "Ease my trip",
+        "symbol": "EASEMYTRIP.BO",
+        "exchange": "BSE",
+        "exchDisp": "Bombay",
+        "exchangeName": "BSE"
+      }
+    ]
+
+  }
+]

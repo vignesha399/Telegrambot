@@ -1,13 +1,7 @@
 const { postMessage, postDocument, deleteChatMessage } = require("../Components/axios");
-const EventEmitter = require('eventemitter3');
 const fileType = require('file-type');
 const request = require('@cypress/request-promise');
-const streamedRequest = require('@cypress/request');
-const qs = require('querystring');
-const stream = require('stream');
 const mime = require('mime');
-const path = require('path');
-const fs = require('fs');
 const { errors } = require("node-telegram-bot-api/src/telegram");
 const { BASE_URL } = require("../Components/axios");
 const deprecate = require('node-telegram-bot-api/src/utils').deprecate;

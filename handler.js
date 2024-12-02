@@ -7,6 +7,7 @@ const { renamePhoto, renameDoument } = require('./Components/renameFiles');
 // const outFile = require('./outFile');
 const fs = require('fs');
 var { ncrypt } = require("ncrypt-js");
+const { stockDetails, setStockAlert, setStockNotify } = require('./Components/stock');
 
 let userName;
 function findUserName(first_name, last_name) {
@@ -44,6 +45,18 @@ async function handler(req) {
             case '/weatherreport@kurpandibot':
                 console.log('case 2');
                 await findWeatherReport(req, userName);
+                break;
+            case '/stock':
+                console.log('case stock');
+                await stockDetails(req, userName);
+                break;
+            case '/stockAlert':
+                console.log('case stock');
+                await setStockAlert(req, userName);
+                break;
+            case '/stockNotify':
+                console.log('case stock');
+                await setStockNotify(req, userName);
                 break;
             case '/delete_my_chat':
                 console.log('case 2');
@@ -140,26 +153,26 @@ async function handler(req) {
         await renameDoument(req).catch(e => console.log(e));
         console.log('handler ');
     }
-    var _secretKey = "some-super-secret-key";
-    var object = {
-        NycryptJs: "is cool and fun.",
-        You: "should try it!"
-    }
+    // var _secretKey = "some-super-secret-key";
+    // var object = {
+    //     NycryptJs: "is cool and fun.",
+    //     You: "should try it!"
+    // }
 
-    var ncryptObject = new ncrypt('ncrypt-js');
+    // var ncryptObject = new ncrypt('ncrypt-js');
 
     // encrypting super sensitive data here
-    var encryptedObject = ncryptObject.encrypt(object);
-    console.log("Encryption process...");
-    console.log("Plain Object     : ", object);
-    console.log("Encrypted Object : " + encryptedObject);
+    // var encryptedObject = ncryptObject.encrypt(object);
+    // console.log("Encryption process...");
+    // console.log("Plain Object     : ", object);
+    // console.log("Encrypted Object : " + encryptedObject);
 
     // decrypted super sensitive data here
-    var decryptedObject = ncryptObject.decrypt(encryptedObject);
-    console.log("... and then decryption...");
-    console.log("Decipher Text : ", decryptedObject);
-    console.log("...done.");
-    //setMyCommands([
+    // var decryptedObject = ncryptObject.decrypt(encryptedObject);
+    // console.log("... and then decryption...");
+    // console.log("Decipher Text : ", decryptedObject);
+    // console.log("...done.");
+    // setCommands([
     //     {
     //         "command": "start",
     //         "description": "Start the bot"
