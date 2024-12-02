@@ -15,7 +15,7 @@
     "breezeconnect": "^1.0.29",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "ncrypt-js": "^2.1.1",
